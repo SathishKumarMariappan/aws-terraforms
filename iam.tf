@@ -41,7 +41,7 @@ resource "aws_iam_role_policy" "labmda_dynamodb_policy" {
 # resource "aws_iam_policy_attachment" "lambda_role" {
 #   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaRole"
 #   role = aws_iam_role.iam_for_lambda.name
-# }
+# } some change 
 
 
 
