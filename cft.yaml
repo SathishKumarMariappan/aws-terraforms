@@ -1,0 +1,49 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: LAMP Stack on Ubuntu EC2 with Apache, MySQL, PHP
+
+Parameters:
+  KeyName:
+    Description: Name of an existing EC2 KeyPair to SSH into the instance
+    Type: AWS::EC2::KeyPair::KeyName
+
+Resources:
+  LampSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Enable SSH, HTTP, and MySQL access
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 3306
+          ToPort: 3306
+          CidrIp: 0.0.0.0/0
+
+  LampInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t2.micro
+      KeyName: !Ref KeyName
+      SecurityGroups:
+        - !Ref LampSecurityGroup
+
+      ImageId: ami-0fc5d935ebf8bc3bc
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash
+          apt-get update -y
+          apt-get install -y apache2 mysql-server php libapache2-mod-php php-mysql
+          systemctl enable apache2
+          systemctl start apache2
+          echo "<?php phpinfo(); ?>" > /var/www/html/index.php
+
+Outputs:
+  WebsiteURL:
+    Description: Public URL of the LAMP application
+    Value: !Sub "http://${LampInstance.PublicDnsName}"
