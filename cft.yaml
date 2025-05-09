@@ -33,7 +33,7 @@ Resources:
       SecurityGroups:
         - !Ref LampSecurityGroup
 
-      ImageId: ami-0fc5d935ebf8bc3bc
+      ImageId: ami-0ae6f07ad3a8ef182
       UserData:
         Fn::Base64: !Sub |
           #!/bin/bash
